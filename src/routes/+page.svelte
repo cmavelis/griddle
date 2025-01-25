@@ -1,10 +1,11 @@
 <script>
     const map = $state(Array(50).fill(0).concat(Array(50).fill(1)))
+    const lockedCell = 50
 </script>
 
 <div class="grid">
     {#each map as cell, i}
-        <div class={{box:true, color: cell}}>{cell} {i}</div>
+        <div class={{box:true, color: cell, locked: i === lockedCell}}>{cell} {i}</div>
     {/each}
 </div>
 
@@ -21,5 +22,8 @@
     }
     .color {
         background-color: #583c36;
+    }
+    .locked {
+        outline: 2px solid red
     }
 </style>
