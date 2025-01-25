@@ -1,5 +1,5 @@
 <script lang="ts">
-    const map = $state(Array(50).fill(0).concat(Array(50).fill(1)))
+    let { map } = $props();
     const lockedCell = 50
     let drawing = $state(false)
     let drawValue = $state(0)
@@ -47,7 +47,7 @@
 
 <div class="grid" onmousedown={handleGridMouseDown} onmouseover={handleMouseEnter} onmouseup={handleMouseUp} oncontextmenu={handleRightClick}>
     {#each map as cell, i}
-        <div data-cma-box-id={i} data-cma-box-value={cell} class={['box', `color${cell}`, i === lockedCell && 'locked']}>{cell} {i}</div>
+        <div data-cma-box-id={i} data-cma-box-value={cell} class={['box', `color${cell}`, i === lockedCell && 'locked']}/>
     {/each}
 </div>
 
