@@ -75,7 +75,7 @@
 <style>
     .grid {
         display: grid;
-        grid-template-columns: repeat(10, min-content);
+        grid-template-columns: repeat(var(--grid-columns), min-content);
         gap: 2px;
         border: none;
         padding: 0;

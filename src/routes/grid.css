@@ -1,4 +1,5 @@
 :root {
+    --grid-columns: 10;
     --color-empty: slategray;
     --color-terrain: #583c36;
     --color-obstacle: hotpink;
