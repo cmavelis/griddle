@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import defaultCollection from '$lib/default-collection.json';
 import defaultGrid from '$lib/default-grid.json';
@@ -36,3 +36,13 @@ export const appendMap = (grid: string) => {
 	}));
 };
 
+export const deleteMap = (id: string) => {
+	collection.update(c => ({
+		...c,
+		data: c.data.filter(map => map.id !== id)
+	}));
+};
+
+export const getMap = (id: string) => {
+	return get(collection).data.find(map => map.id === id);
+};

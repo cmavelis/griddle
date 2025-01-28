@@ -1,7 +1,7 @@
 <script lang="ts">
     import GridEditor from "./GridEditor.svelte";
     import type { Collection } from "../stores/collection";
-    import { collection, appendMap } from "../stores/collection";
+    import { collection, appendMap, deleteMap, getMap } from "../stores/collection";
 
     let map = $state(Array(50).fill(0).concat(Array(50).fill(1)))
     let mapString = $derived(map.join(''))
@@ -11,6 +11,17 @@
     $effect(() => {
         collection.update(c => ({ ...c, author }))
     })
+
+    const handleMapDelete = (id: string) => {
+        deleteMap(id)
+    }
+
+    const handleMapEdit = (id: string) => {
+        const foundMap = getMap(id)
+        if (foundMap) {
+            map = foundMap.grid.split('').map(Number)
+        }
+    }
 
     const handleCopy = () => {
         navigator.clipboard.writeText(mapString)
@@ -35,8 +46,8 @@
 <div>
     <GridEditor bind:map/>
     <div>{mapString}</div>
-    <button onclick={handleCopy}>Copy map</button>
-    <button onclick={handleSaveMap}>Save map to collection</button>
+    <button onclick={handleCopy}>Copy map string</button>
+    <button onclick={handleSaveMap}>Add map to collection</button>
     <br/>
     <br/>
     <br/>
@@ -49,10 +60,17 @@
     <p>Collection:</p>
     <div class="maps-container">
     {#each $collection.data as item}
-        <div class="grid">
-            {#each item.grid as cell}
-                <div class={['box', `color${cell}`]}></div>
-            {/each}
+        <div class="map-preview-container">
+            <div class="map-preview">
+                {#each item.grid as cell}
+                    <div class={['box', `color${cell}`]}></div>
+                {/each}
+            </div>
+            <div>
+                <p>ID: {item.id}</p>
+                <button onclick={() => handleMapDelete(item.id)}>Delete</button>
+                <button onclick={() => handleMapEdit(item.id)}>Copy to editor</button>
+            </div>
         </div>
     {/each}
     </div>
@@ -61,10 +79,17 @@
 <style>
 .maps-container {
     display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
-.grid {
+.map-preview-container {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.map-preview {
     display: grid;
     grid-template-columns: repeat(var(--grid-columns), min-content);
 }
