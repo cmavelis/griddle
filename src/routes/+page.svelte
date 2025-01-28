@@ -1,6 +1,5 @@
 <script lang="ts">
     import GridEditor from "./GridEditor.svelte";
-    import type { Collection } from "../stores/collection";
     import { collection, appendMap, deleteMap, getMap } from "../stores/collection";
 
     let map = $state(Array(50).fill(0).concat(Array(50).fill(1)))
@@ -43,14 +42,13 @@
     }
 </script>
 
-<div>
-    <GridEditor bind:map/>
-    <div>{mapString}</div>
-    <button onclick={handleCopy}>Copy map string</button>
-    <button onclick={handleSaveMap}>Add map to collection</button>
-    <br/>
-    <br/>
-    <br/>
+<div class="main-container">
+    <div>
+        <GridEditor bind:map/>
+        <button onclick={handleCopy}>Copy map string</button>
+        <button onclick={handleSaveMap}>Add map to collection</button>
+    </div>
+    <div>
 
     <form onsubmit={handleDownload}>
         <label for="author">Author</label>
@@ -70,18 +68,27 @@
                 <p>ID: {item.id}</p>
                 <button onclick={() => handleMapDelete(item.id)}>Delete</button>
                 <button onclick={() => handleMapEdit(item.id)}>Copy to editor</button>
+                </div>
             </div>
+        {/each}
         </div>
-    {/each}
     </div>
     
 </div>
 <style>
-.maps-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+    .main-container {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .maps-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+        max-height: 85vh;
+    }
 
 .map-preview-container {
     display: flex;
