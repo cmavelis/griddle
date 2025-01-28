@@ -1,10 +1,17 @@
 <script lang="ts">
     import GridEditor from "./GridEditor.svelte";
     import type { Collection } from "../stores/collection";
-    const uuid = () => crypto.randomUUID();
+    import { collection } from "../stores/collection";
+
     let map = $state(Array(50).fill(0).concat(Array(50).fill(1)))
     let mapString = $derived(map.join(''))
-    let author = $state('anonymous')
+    let author = $state($collection.author)
+    let collectionString = $derived(JSON.stringify($collection, null, 2))
+
+    // Sync author with store
+    $effect(() => {
+        collection.update(c => ({ ...c, author }))
+    })
 
     const handleCopy = () => {
         navigator.clipboard.writeText(mapString)
@@ -14,12 +21,13 @@
         e.preventDefault()
 
         const payload: Collection = {
+            id: crypto.randomUUID(),
             size: [10,10],
             game: 'project-proteus',
             author,
-            createdAt: new Date().toISOString(),
+            lastUpdated: new Date().toISOString(),
             data: [{
-                id: uuid(),
+                id: crypto.randomUUID(),
                 grid: mapString
             }]
         }
@@ -34,10 +42,13 @@
 </script>
 
 <div>
+    <div>
+        {collectionString}
+    </div>
     <GridEditor bind:map/>
     <div>{mapString}</div>
     <button onclick={handleCopy}>Copy map</button>
-    
+
     <br/>
     <br/>
     <br/>

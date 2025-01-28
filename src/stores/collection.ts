@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
 import defaultCollection from '$lib/default-collection.json';
 import defaultGrid from '$lib/default-grid.json';
 
@@ -8,8 +9,18 @@ export type Collection = Omit<typeof defaultCollection, 'data'> & {
 	data: Grid[];
 };
 
+const updatedCollection = {
+	...defaultCollection,
+	lastUpdated: new Date().toISOString(),
+	id: crypto.randomUUID()
+}
+
 export const collection = writable<Collection>(
-	JSON.parse(localStorage.getItem('collection') ?? JSON.stringify(defaultCollection))
+	browser 
+		? JSON.parse(localStorage.getItem('collection') ?? JSON.stringify(updatedCollection))
+		: updatedCollection
 );
 
-collection.subscribe((value) => (localStorage.collection = JSON.stringify(value)));
+if (browser) {
+	collection.subscribe((value) => localStorage.collection = JSON.stringify(value));
+}
