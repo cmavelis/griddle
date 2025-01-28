@@ -40,6 +40,24 @@
         a.download = 'collection.json';
         a.click();
     }
+
+    const handleFileUpload = async (event: Event) => {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+        
+        try {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                // @ts-ignore
+                const content = JSON.parse(e.target.result);
+                collection.set(content);
+                author = content.author
+            };
+            reader.readAsText(file);
+        } catch (error) {
+            console.error('Error reading file:', error);
+        }
+    };
 </script>
 
 <div class="main-container">
@@ -47,6 +65,14 @@
         <GridEditor bind:map/>
         <button onclick={handleCopy}>Copy map string</button>
         <button onclick={handleSaveMap}>Add map to collection</button>
+        <br/>
+        <br/>
+        <label for="fileInput">Upload collection (will overwrite current collection)</label>
+        <input 
+            type="file" 
+            accept=".json"
+            onchange={handleFileUpload} 
+        />
     </div>
     <div>
 
@@ -99,6 +125,7 @@
 .map-preview {
     display: grid;
     grid-template-columns: repeat(var(--grid-columns), min-content);
+    grid-template-rows: repeat(var(--grid-rows),10px);
 }
 
 .box {
