@@ -1,7 +1,7 @@
 <script lang="ts">
     import GridEditor from "./GridEditor.svelte";
     import type { Collection } from "../stores/collection";
-    import { collection } from "../stores/collection";
+    import { collection, appendMap } from "../stores/collection";
 
     let map = $state(Array(50).fill(0).concat(Array(50).fill(1)))
     let mapString = $derived(map.join(''))
@@ -15,6 +15,10 @@
 
     const handleCopy = () => {
         navigator.clipboard.writeText(mapString)
+    }
+
+    const handleSaveMap = () => {
+        appendMap(mapString)
     }
 
     const handleDownload = (e: SubmitEvent) => {
@@ -48,7 +52,7 @@
     <GridEditor bind:map/>
     <div>{mapString}</div>
     <button onclick={handleCopy}>Copy map</button>
-
+    <button onclick={handleSaveMap}>Save map to collection</button>
     <br/>
     <br/>
     <br/>
@@ -58,5 +62,9 @@
         <input type="text" bind:value={author}/>
         <button type="submit">Download</button>
     </form>
+    <p>Collection:</p>
+    <div>{#each $collection.data as item}
+        {item.grid}
+    {/each}</div>
     
 </div>

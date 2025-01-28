@@ -1,5 +1,6 @@
 <script lang="ts">
     import '../app.css';
+    import './grid.css';
 
     let { children } = $props();
 </script>

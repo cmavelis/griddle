@@ -24,3 +24,15 @@ export const collection = writable<Collection>(
 if (browser) {
 	collection.subscribe((value) => localStorage.collection = JSON.stringify(value));
 }
+
+export const appendMap = (grid: string) => {
+	collection.update(c => ({
+		...c,
+		lastUpdated: new Date().toISOString(),
+		data: [...c.data, {
+			id: crypto.randomUUID(),
+			grid
+		}]
+	}));
+};
+

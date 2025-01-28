@@ -84,13 +84,13 @@
     .box {
         width: 50px;
         height: 50px;
-        background-color: slategray;
+        background-color: var(--color-empty);
     }
     .color1 {
-        background-color: #583c36;
+        background-color: var(--color-terrain);
     }
     .color2 {
-        background-color: hotpink;
+        background-color: var(--color-obstacle);
     }
     .locked {
         outline: 2px solid red
