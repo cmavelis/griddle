@@ -4,9 +4,8 @@ import defaultGrid from '$lib/default-grid.json';
 
 type Grid = typeof defaultGrid;
 
-type Collection = typeof defaultCollection & {
-	size: string[];
-	grid: Grid[];
+export type Collection = Omit<typeof defaultCollection, 'data'> & {
+	data: Grid[];
 };
 
 export const collection = writable<Collection>(
