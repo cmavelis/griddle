@@ -37,7 +37,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'collection.json';
+        a.download = `collection-${author}.json`;
         a.click();
     }
 
