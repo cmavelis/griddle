@@ -9,6 +9,8 @@ type Collection = typeof defaultCollection & {
 	grid: Grid[];
 };
 
-export const enabled = writable<Collection>(JSON.parse(localStorage.getItem('collection')));
+export const collection = writable<Collection>(
+	JSON.parse(localStorage.getItem('collection') ?? JSON.stringify(defaultCollection))
+);
 
-enabled.subscribe((value) => (localStorage.collection = JSON.stringify(value)));
+collection.subscribe((value) => (localStorage.collection = JSON.stringify(value)));
