@@ -3,10 +3,21 @@
     import { collection, appendMap, deleteMap, getMap } from "../stores/collection";
     import { createCollection } from "$lib/collection";
 
-    let size = $state(10)
+    let newSize = $state(10)
+    let newAuthor = $state('anonymous')
+    let area = $derived($collection.size[0] * $collection.size[1])
+    let halfArea = $derived(area / 2)
     let map = $state(Array(50).fill(0).concat(Array(50).fill(1)))
     let mapString = $derived(map.join(''))
-    let author = $state($collection.author)
+
+    $effect(() => {
+        map = Array(halfArea).fill(0).concat(Array(halfArea).fill(1))
+    })
+
+    $effect(() => {
+        document.documentElement.style.setProperty('--grid-columns', $collection.size[0].toString());
+        document.documentElement.style.setProperty('--grid-rows', $collection.size[1].toString());
+    });
 
     const handleMapDelete = (id: string) => {
         deleteMap(id)
@@ -55,14 +66,14 @@
 
     const handleNewCollection = (e: SubmitEvent) => {
         e.preventDefault()
-        const newCollection = createCollection(author, size)
+        const newCollection = createCollection(newAuthor, newSize)
         collection.set(newCollection)
     }
 </script>
 
 <div class="main-container">
     <div>
-        <GridEditor bind:map/>
+        <GridEditor bind:map lockedCell={halfArea}/>
         <button onclick={handleCopy}>Copy map string</button>
         <button onclick={handleSaveMap}>Add map to collection</button>
         <br/>
@@ -78,9 +89,9 @@
         <p>New Collection:</p>
         <form onsubmit={handleNewCollection}>
             <label for="author">Author</label>
-            <input type="text" bind:value={author}/>
+            <input type="text" bind:value={newAuthor}/>
             <label for="size">Size</label>
-            <input type="number" bind:value={size}/>
+            <input type="number" bind:value={newSize}/>
             <br/>
             <button type="submit">Create</button>
         </form>
@@ -115,6 +126,7 @@
         display: flex;
         flex-direction: row;
         gap: 20px;
+        justify-content: center;
     }
 
     .maps-container {

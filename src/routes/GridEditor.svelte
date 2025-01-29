@@ -1,6 +1,5 @@
 <script lang="ts">
-    let { map = $bindable() } = $props<{map: number[]}>();
-    const lockedCell = 50
+    let { map = $bindable(), lockedCell = 50 } = $props<{map: number[], lockedCell: number}>();
     let drawing = $state(false)
     let drawValue = $state(0)
     const maxDrawValue = 1
