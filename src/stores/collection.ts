@@ -1,19 +1,8 @@
 import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
-import defaultCollection from '$lib/default-collection.json';
-import defaultGrid from '$lib/default-grid.json';
+import { type Collection, createCollection } from '$lib/collection';
 
-type Grid = typeof defaultGrid;
-
-export type Collection = Omit<typeof defaultCollection, 'data'> & {
-	data: Grid[];
-};
-
-const updatedCollection = {
-	...defaultCollection,
-	lastUpdated: new Date().toISOString(),
-	id: crypto.randomUUID()
-}
+const updatedCollection = createCollection('anonymous', 10)
 
 export const collection = writable<Collection>(
 	browser 

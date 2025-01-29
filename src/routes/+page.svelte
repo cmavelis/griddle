@@ -1,15 +1,23 @@
 <script lang="ts">
     import GridEditor from "./GridEditor.svelte";
     import { collection, appendMap, deleteMap, getMap } from "../stores/collection";
+    import { createCollection } from "$lib/collection";
 
+    let newSize = $state(10)
+    let newAuthor = $state('anonymous')
+    let area = $derived($collection.size[0] * $collection.size[1])
+    let halfArea = $derived(area / 2)
     let map = $state(Array(50).fill(0).concat(Array(50).fill(1)))
     let mapString = $derived(map.join(''))
-    let author = $state($collection.author)
 
-    // Sync author with store
     $effect(() => {
-        collection.update(c => ({ ...c, author }))
+        map = Array(halfArea).fill(0).concat(Array(halfArea).fill(1))
     })
+
+    $effect(() => {
+        document.documentElement.style.setProperty('--grid-columns', $collection.size[0].toString());
+        document.documentElement.style.setProperty('--grid-rows', $collection.size[1].toString());
+    });
 
     const handleMapDelete = (id: string) => {
         deleteMap(id)
@@ -30,14 +38,12 @@
         appendMap(mapString)
     }
 
-    const handleDownload = (e: SubmitEvent) => {
-        e.preventDefault()
-
+    const handleDownload = () => {
         const blob = new Blob([JSON.stringify($collection)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `collection-${author}.json`;
+        a.download = `collection-${$collection.author}.json`;
         a.click();
     }
 
@@ -51,18 +57,23 @@
                 // @ts-ignore
                 const content = JSON.parse(e.target.result);
                 collection.set(content);
-                author = content.author
             };
             reader.readAsText(file);
         } catch (error) {
             console.error('Error reading file:', error);
         }
     };
+
+    const handleNewCollection = (e: SubmitEvent) => {
+        e.preventDefault()
+        const newCollection = createCollection(newAuthor, newSize)
+        collection.set(newCollection)
+    }
 </script>
 
 <div class="main-container">
     <div>
-        <GridEditor bind:map/>
+        <GridEditor bind:map lockedCell={halfArea}/>
         <button onclick={handleCopy}>Copy map string</button>
         <button onclick={handleSaveMap}>Add map to collection</button>
         <br/>
@@ -73,15 +84,24 @@
             accept=".json"
             onchange={handleFileUpload} 
         />
+        <br/>
+        <br/>
+        <p>New Collection:</p>
+        <form onsubmit={handleNewCollection}>
+            <label for="author">Author</label>
+            <input type="text" bind:value={newAuthor}/>
+            <label for="size">Size</label>
+            <input type="number" bind:value={newSize}/>
+            <br/>
+            <button type="submit">Create</button>
+        </form>
     </div>
     <div>
 
-    <form onsubmit={handleDownload}>
-        <label for="author">Author</label>
-        <input type="text" bind:value={author}/>
-        <button type="submit">Download</button>
-    </form>
-    <p>Collection:</p>
+    <p>Collection by {$collection.author}, size: {$collection.size.toString()}</p>
+    <button onclick={handleDownload}>Download</button>
+    <br/>
+    <br/>
     <div class="maps-container">
     {#each $collection.data as item}
         <div class="map-preview-container">
@@ -106,6 +126,7 @@
         display: flex;
         flex-direction: row;
         gap: 20px;
+        justify-content: center;
     }
 
     .maps-container {
