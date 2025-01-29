@@ -19,6 +19,13 @@
         document.documentElement.style.setProperty('--grid-rows', $collection.size[1].toString());
     });
 
+    // Ensure newSize is even when changed
+    $effect(() => {
+        if (newSize % 2 !== 0) {
+            newSize = Math.max(2, Math.floor(newSize / 2) * 2)
+        }
+    })
+
     const handleMapDelete = (id: string) => {
         deleteMap(id)
     }
@@ -91,7 +98,7 @@
             <label for="author">Author</label>
             <input type="text" bind:value={newAuthor}/>
             <label for="size">Size</label>
-            <input type="number" bind:value={newSize}/>
+            <input type="number" bind:value={newSize} min="2" step="2"/>
             <br/>
             <button type="submit">Create</button>
         </form>
