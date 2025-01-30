@@ -42,7 +42,9 @@
         e.preventDefault()
         const id = getIdFromEvent(e)
         if (id) {
+            drawValue = rightClickValue
             map[id] = rightClickValue
+            drawing = true
         }
     }
 
